@@ -1,0 +1,6 @@
+@echo off
+echo Installing dependencies...
+& "C:\Users\PC VISION\AppData\Local\Programs\Python\Python314\python.exe" -m pip install -r requirements.txt
+echo Starting Art Weaver...
+& "C:\Users\PC VISION\AppData\Local\Programs\Python\Python314\python.exe" app.py
+pause

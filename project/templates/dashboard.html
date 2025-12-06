@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="dashboard">
+    <h1>Welcome, {{ username }}</h1>
+    <p>Role: {{ role }}</p>
+
+    {% if role == 'writer' %}
+    <div class="card" id="writerBox">
+        <h2>Your Story Dashboard</h2>
+        <textarea id="storyInput" rows="4" placeholder="Write your story..."></textarea>
+        <button onclick="postStory()">Post Story</button>
+        <button onclick="undoStory()">Undo</button>
+
+        <h3>Stories Feed (Sorted Alphabetically via BST)</h3>
+        <div id="feed">
+            <!-- Loaded via JS -->
+        </div>
+    </div>
+    {% elif role == 'artist' %}
+    <div class="card" id="artistBox">
+        <h2>Your Art Dashboard</h2>
+
+        <div class="visualization-queue">
+            <h3>Next Story to Visualize (Priority Queue)</h3>
+            <div id="viz-queue-item">
+                Loading...
+            </div>
+        </div>
+
+        <h3>Post Art</h3>
+        <input type="text" placeholder="Art Title">
+        <input type="file" accept="image/*">
+        <button>Post Art</button>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

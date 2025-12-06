@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="landing">
+    <h1>Welcome to Art Weaver</h1>
+    <p>Where Writers and Artists Collaborate</p>
+    <br>
+    <button onclick="location.href='{{ url_for('set_role', role='writer') }}'">I am a Writer</button>
+    <button onclick="location.href='{{ url_for('set_role', role='artist') }}'">I am an Artist</button>
+</div>
+{% endblock %}
