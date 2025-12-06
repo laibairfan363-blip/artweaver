@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block content %}
+<div id="home">
+    <div id="welcomeMsg">Welcome, {{ username }} ({{ role }})</div>
+
+    <div class="role-box">
+        <!-- Writer Dashboard -->
+        {% if role == 'writer' %}
+        <div class="card" style="width: 80%; cursor: default;">
+            <h2>Your Story Dashboard</h2>
+            <form onsubmit="postStory(event)" style="max-width: 600px;">
+                <input type="text" id="storyTitle" placeholder="Story Title" required>
+                <textarea id="storyInput" rows="4" placeholder="Write your story..."></textarea>
+                <label>
+                    <input type="checkbox" id="isPremium" style="width:auto;"> Premium (High Priority)
+                </label>
+                <button type="submit">Post Story</button>
+            </form>
+            <button onclick="undoStory()" style="background:#555;">Undo Last Post</button>
+
+            <h3>Stories Feed (Sorted via BST)</h3>
+            <div id="feed">loading...</div>
+        </div>
+        {% endif %}
+
+        <!-- Artist Dashboard -->
+        {% if role == 'artist' %}
+        <div class="card" style="width: 80%; cursor: default;">
+            <h2>Your Art Dashboard</h2>
+            <h3>Tasks Queue (Priority & Normal)</h3>
+            <div id="taskQueue" style="margin-bottom:20px; text-align:left;">loading queue...</div>
+
+            <h3>Submit Art</h3>
+            <form onsubmit="postArt(event)" enctype="multipart/form-data" style="max-width: 600px;">
+                <select id="storySelect">
+                    <option value="">Select a Story to Visualize</option>
+                </select>
+                <input type="text" id="artTitle" placeholder="Art Title" required>
+                <!-- File Input for Digital Art -->
+                <input type="file" id="artFile" accept="image/*" required style="background:rgba(255,255,255,0.2);">
+                <textarea id="artDesc" rows="2" placeholder="Description..." required></textarea>
+                <button type="submit">Post Art</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="card" style="width: 80%; cursor: default; margin-top:20px;">
+        <h2>Network Graph (Who is connected?)</h2>
+        <div id="graphView" style="text-align:left; max-height: 200px; overflow-y:auto;"></div>
+    </div>
+</div>
+{% endblock %}

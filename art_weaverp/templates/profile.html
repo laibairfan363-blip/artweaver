@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block content %}
+<div id="profile">
+    <h1>Your Profile</h1>
+
+    <div class="profile-container" style="display:flex; justify-content:center; gap:40px;">
+        <div class="profile-left" style="display:flex; flex-direction:column; gap:12px; width:300px; text-align:left;">
+            <label>Name</label>
+            <input id="pName" type="text" placeholder="Your Name" value="{{ user.username }}" readonly
+                style="background:rgba(255,255,255,0.1);">
+
+            <label>Email</label>
+            <input id="pEmail" type="email" placeholder="Your Email" value="{{ user.email }}" readonly
+                style="background:rgba(255,255,255,0.1);">
+
+            <label>Bio</label>
+            <textarea id="pBio" rows="4" placeholder="Write your bio...">{{ user.bio }}</textarea>
+
+            <label>Role</label>
+            <input id="pRole" type="text" value="{{ user.role }}" readonly style="background:rgba(255,255,255,0.1);">
+
+            <button onclick="saveProfile()">Save Profile</button>
+        </div>
+
+        <div class="profile-right" style="display:flex; flex-direction:column; align-items:center;">
+            <img id="profilePicPreview" src="{{ url_for('static', filename='img/default_avatar.png') }}"
+                onerror="this.src='https://via.placeholder.com/130'" style="background:#fff;">
+            <!-- Simplification: No real file upload for this demo, just UI placeholder -->
+            <input type="file" accept="image/*" disabled title="Profile picture upload not implemented in demo">
+        </div>
+    </div>
+</div>
+{% endblock %}

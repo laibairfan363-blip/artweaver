@@ -1,0 +1,126 @@
+{% extends "layout.html" %}
+{% block content %}
+<div id="chat-page">
+    <h1>Professional Chat</h1>
+
+    <div style="display:flex; justify-content:center; gap:20px; height: 600px;">
+        <!-- Friends List -->
+        <div class="card"
+            style="width:250px; padding:20px; text-align:left; cursor:default; overflow-y:auto; margin:0;">
+            <h3>Friends</h3>
+            <div style="margin-bottom:15px; display:flex;">
+                <input type="text" id="addFriendInput" placeholder="Add Username" style="font-size:14px; padding:8px;">
+                <button onclick="addFriend()" style="font-size:14px; padding:8px; margin:0 0 0 5px;">+</button>
+            </div>
+            <ul id="friendsList" style="list-style:none; padding:0;">
+                <li>Loading...</li>
+            </ul>
+        </div>
+
+        <!-- Chat Window -->
+        <div class="card"
+            style="width:500px; padding:20px; cursor:default; display:flex; flex-direction:column; margin:0;">
+            <h3 id="chatHeader">Select a friend to chat</h3>
+            <div id="chatMessages"
+                style="flex:1; background:rgba(0,0,0,0.1); border-radius:10px; padding:15px; overflow-y:auto; text-align:left; margin-bottom:15px;">
+                <!-- Messages go here -->
+            </div>
+            <form onsubmit="sendMessage(event)" style="display:flex; gap:10px; padding:0; background:transparent;">
+                <input type="text" id="msgInput" placeholder="Type a message..." disabled style="flex:1;">
+                <button type="submit" id="sendBtn" disabled>Send</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentFriendId = null;
+    let currentFriendName = '';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadFriends();
+        // Poll for new messages every 3 seconds if chat is open
+        setInterval(() => {
+            if (currentFriendId) loadChatHistory(currentFriendId, currentFriendName, false);
+        }, 3000);
+    });
+
+    async function addFriend() {
+        const input = document.getElementById('addFriendInput');
+        const username = input.value;
+        if (!username) return;
+
+        const res = await fetch('/api/friends/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username })
+        });
+        const data = await res.json();
+        alert(data.message);
+        if (data.status === 'success') {
+            input.value = '';
+            loadFriends();
+        }
+    }
+
+    async function loadFriends() {
+        const res = await fetch('/api/friends');
+        const friends = await res.json();
+        const list = document.getElementById('friendsList');
+        list.innerHTML = '';
+
+        if (friends.length === 0) list.innerHTML = '<li>No friends yet.</li>';
+
+        friends.forEach(f => {
+            const li = document.createElement('li');
+            li.style.padding = '10px';
+            li.style.borderBottom = '1px solid rgba(255,255,255,0.2)';
+            li.style.cursor = 'pointer';
+            li.innerText = f.username;
+            li.onclick = () => loadChatHistory(f.id, f.username, true);
+            list.appendChild(li);
+        });
+    }
+
+    async function loadChatHistory(friendId, friendName, scrollToBottom = true) {
+        currentFriendId = friendId;
+        currentFriendName = friendName;
+
+        document.getElementById('chatHeader').innerText = 'Chat with ' + friendName;
+        document.getElementById('msgInput').disabled = false;
+        document.getElementById('sendBtn').disabled = false;
+
+        const res = await fetch(`/api/chat/history?friend_id=${friendId}`);
+        const msgs = await res.json();
+        const container = document.getElementById('chatMessages');
+
+        // Simple render: verify if length changed to avoid jitter, 
+        // but for simple demo, re-rendering is fine or check last ID.
+        // We'll just re-render to support updates.
+        container.innerHTML = msgs.map(m => `
+        <div style="margin-bottom:8px;">
+            <strong>${m.sender}</strong> <span style="font-size:12px; opacity:0.7;">${m.time}</span><br>
+            ${m.message}
+        </div>
+    `).join('');
+
+        if (scrollToBottom) container.scrollTop = container.scrollHeight;
+    }
+
+    async function sendMessage(e) {
+        e.preventDefault();
+        const input = document.getElementById('msgInput');
+        const msg = input.value;
+        if (!msg || !currentFriendId) return;
+
+        await fetch('/api/chat/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ friend_id: currentFriendId, message: msg })
+        });
+
+        input.value = '';
+        loadChatHistory(currentFriendId, currentFriendName, true);
+    }
+</script>
+{% endblock %}

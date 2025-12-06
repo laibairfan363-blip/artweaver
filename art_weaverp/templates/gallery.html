@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block content %}
+<div id="gallery">
+    <h1>Art Gallery</h1>
+    <div style="width: 80%; margin: auto;">
+        <h3>Masterpieces by our artists</h3>
+        <div id="artGalleryFeed" style="display:flex; flex-wrap:wrap; justify-content:center; gap:20px;">loading art...
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const res = await fetch('/api/art/all');
+            const artPieces = await res.json();
+            const feed = document.getElementById('artGalleryFeed');
+            feed.innerHTML = '';
+
+            if (artPieces.length === 0) {
+                feed.innerHTML = 'No art posted yet.';
+                return;
+            }
+
+            artPieces.forEach(art => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.style.width = '300px';
+                div.style.cursor = 'default';
+                // Placeholder image since we don't store files
+                div.innerHTML = `
+                <div style="width:100%; height:200px; background:#ddd; border-radius:10px; margin-bottom:10px; display:flex; align-items:center; justify-content:center;">Art Image Placeholder</div>
+                <h3>${art.title}</h3>
+                <p>${art.description}</p>
+                <small>By ${art.artist} | Inspired by "${art.story_title}"</small>
+            `;
+                feed.appendChild(div);
+            });
+        } catch (err) {
+            console.error(err);
+            document.getElementById('artGalleryFeed').innerText = 'Error loading gallery.';
+        }
+    });
+</script>
+{% endblock %}

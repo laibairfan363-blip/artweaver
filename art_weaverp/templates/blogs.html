@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block content %}
+<div id="blogs">
+    <h1>Blogs & Stories</h1>
+    <div style="width: 80%; margin: auto;">
+        <h3>Explore stories from our writers</h3>
+        <div id="allStoriesFeed">loading stories...</div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const res = await fetch('/api/stories'); // Reusing existing stories API
+            const stories = await res.json();
+            const feed = document.getElementById('allStoriesFeed');
+            feed.innerHTML = '';
+            stories.forEach(story => {
+                const div = document.createElement('div');
+                div.className = 'feed-item';
+                div.innerHTML = `<h3>${story.title}</h3><p>${story.content}</p><small>By ${story.author} | ${story.timestamp}</small>`;
+                feed.appendChild(div);
+            });
+        } catch (err) {
+            console.error(err);
+            document.getElementById('allStoriesFeed').innerText = 'Error loading blogs.';
+        }
+    });
+</script>
+{% endblock %}

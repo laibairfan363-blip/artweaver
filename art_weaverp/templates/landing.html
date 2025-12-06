@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block content %}
+<div id="landing">
+    <h1>Welcome to Art Weaver</h1>
+    <button onclick="showRoleSelection()">Click Here to Start</button>
+</div>
+
+<div id="role-selection" class="hidden">
+    <h1>Are You a Writer or an Artist?</h1>
+    <div class="role-box">
+        <div class="card" onclick="showSignup('writer')">
+            <h2>Writer</h2>
+            <p>Create poetry, stories, articles and more.</p>
+        </div>
+        <div class="card" onclick="showSignup('artist')">
+            <h2>Artist</h2>
+            <p>Design, draw, illustrate and craft artworks.</p>
+        </div>
+    </div>
+    <button onclick="hideRoleSelection()">Back</button>
+</div>
+
+<div id="signup-form" class="hidden">
+    <h1>Sign Up / Log In</h1>
+    <!-- Toggle between login and signup for simplicity or just combined -->
+    <div class="role-box">
+        <button onclick="toggleAuth('login')">Login</button>
+        <button onclick="toggleAuth('signup')">Sign Up</button>
+    </div>
+
+    <form id="authForm" onsubmit="handleAuth(event)">
+        <input type="hidden" id="authMode" value="login">
+        <input type="hidden" id="selectedRole" value="">
+
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="email" id="email" placeholder="Email (for Signup)">
+        <input type="password" id="password" placeholder="Password" required>
+        <button type="submit">Submit</button>
+    </form>
+    <button onclick="showRoleSelection()">Back to Role Selection</button>
+</div>
+{% endblock %}
